@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans    
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd    
+                        http://www.springframework.org/schema/context    
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<description>Shiro安全配置</description>
+
+	<!-- 扫描service注入realm -->
+	<context:component-scan base-package="com.zlf.service" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+
+
+	<!-- 用户授权/认证信息Cache, 采用EhCache 缓存 -->
+	<!-- <bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager"> -->
+	<!-- <property name="cacheManagerConfigFile" value="classpath:config/ehcache-shiro.xml" 
+		/> -->
+	<!-- </bean> -->
+
+	<!--realm自定义配置，realm是shiro的桥梁，它主要是用来判断subject是否可以登录及权限等 -->
+	<bean id="userRealm" class="com.zlf.shiro.UserRealm" />
+
+	<!-- 自定义form认证过虑器 -->
+	<!-- 基于Form表单的身份验证过滤器，不配置将也会注册此过虑器，表单中的用户账号、密码及loginurl将采用默认值，建议配置 -->
+	<bean id="formAuthenticationFilter" class="com.zlf.shiro.SelfDefinityFormAuthenticationFilter">
+		
+	</bean>
+
+	<!--securityManager是shiro的核心，初始化时协调各个模块运行 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<!--单个realm使用realm,如果有多个realm，使用realms属性代替 -->
+		<property name="realm" ref="userRealm" />
+		<!-- <property name="cacheManager" ref="shiroEhcacheManager" /> -->
+	</bean>
+
+	<!-- <property name="userService" ref="userService"/></bean> 不扫描可采用此方法注入 -->
+	<!--shiro过滤器配置，bean的id值须与web中的filter-name的值相同 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- Shiro的核心安全接口,这个属性是必须的 -->
+		<property name="securityManager" ref="securityManager" />
+		<!-- 身份认证失败，则跳转到登录页面的配置 -->
+		<property name="loginUrl" value="/login.jsp" />
+		<!-- 没有对应权限，则跳转到指定页面 -->
+		<property name="unauthorizedUrl" value="/nopower.jsp" />
+		<!-- 自定义filter配置 -->
+		<property name="filters">
+			<map>
+				<!-- 将自定义 的FormAuthenticationFilter注入shiroFilter中，这里的key=authc是固定的 -->
+				<entry key="authc" value-ref="formAuthenticationFilter" />
+			</map>
+		</property>
+
+
+		<!-- Shiro连接约束配置,即过滤链的定义 -->
+		<property name="filterChainDefinitions">
+			<value>
+				<!--对初次登陆是进入controller的验证方法放开，anon 表示匿名访问，不需要认证以及授权 -->
+				/login/**=authc
+				<!-- 对静态资源允许访问 -->
+				/static/**=anon
+				<!-- 对登陆页面放开拦截 -->
+				/login.jsp=anon
+				<!-- 放开对生成验证码controller层的拦截 -->
+				/queryKaptcha/kaptcha=anon
+				<!--authc表示需要认证 没有进行身份认证是不能进行访问的 -->
+				/view/**=authc
+				<!-- 表明所有的请求必须通过验证。 -->
+				<!-- /**=user -->
+				<!--请求logout，shrio擦除sssion -->
+				/logout=logout
+				/**=anthc
+				<!-- /admin*=authc -->
+				<!-- /student=roles[teacher] -->
+				<!-- /teacher=perms["user:create"] -->
+				<!-- /login/logout=logout -->
+				<!-- /login/**=anon -->
+				<!-- /**=authc,rest -->
+			</value>
+		</property>
+	</bean>
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!-- 开启Shiro注解 -->
+	<!-- <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" -->
+	<!-- depends-on="lifecycleBeanPostProcessor" /> -->
+	<!-- <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor"> -->
+	<!-- <property name="securityManager" ref="securityManager" /> -->
+	<!-- </bean> -->
+
+</beans>  

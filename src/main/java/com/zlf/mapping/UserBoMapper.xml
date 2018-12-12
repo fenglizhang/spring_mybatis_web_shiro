@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zlf.dao.UserBoMapper" >
+  <resultMap id="BaseResultMap" type="com.zlf.bo.UserBo" >
+    <id column="USERID" property="userid" jdbcType="VARCHAR" />
+    <result column="PWD" property="pwd" jdbcType="VARCHAR" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="SEX" property="sex" jdbcType="VARCHAR" />
+    <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+    <result column="ENABLED" property="enabled" jdbcType="VARCHAR" />
+    <result column="USERLEVEL" property="userlevel" jdbcType="VARCHAR" />
+    <result column="MANAGECOM" property="managecom" jdbcType="VARCHAR" />
+    <result column="SALECOM" property="salecom" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    USERID, PWD, USERNAME, SEX, PHONE, ENABLED, USERLEVEL, MANAGECOM, SALECOM
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sp_users
+    where USERID = #{userid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sp_users
+    where USERID = #{userid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zlf.bo.UserBo" >
+    insert into sp_users (USERID, PWD, USERNAME, 
+      SEX, PHONE, ENABLED, 
+      USERLEVEL, MANAGECOM, SALECOM
+      )
+    values (#{userid,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{enabled,jdbcType=VARCHAR}, 
+      #{userlevel,jdbcType=VARCHAR}, #{managecom,jdbcType=VARCHAR}, #{salecom,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zlf.bo.UserBo" >
+    insert into sp_users
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        USERID,
+      </if>
+      <if test="pwd != null" >
+        PWD,
+      </if>
+      <if test="username != null" >
+        USERNAME,
+      </if>
+      <if test="sex != null" >
+        SEX,
+      </if>
+      <if test="phone != null" >
+        PHONE,
+      </if>
+      <if test="enabled != null" >
+        ENABLED,
+      </if>
+      <if test="userlevel != null" >
+        USERLEVEL,
+      </if>
+      <if test="managecom != null" >
+        MANAGECOM,
+      </if>
+      <if test="salecom != null" >
+        SALECOM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=VARCHAR},
+      </if>
+      <if test="userlevel != null" >
+        #{userlevel,jdbcType=VARCHAR},
+      </if>
+      <if test="managecom != null" >
+        #{managecom,jdbcType=VARCHAR},
+      </if>
+      <if test="salecom != null" >
+        #{salecom,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zlf.bo.UserBo" >
+    update sp_users
+    <set >
+      <if test="pwd != null" >
+        PWD = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        USERNAME = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        SEX = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        ENABLED = #{enabled,jdbcType=VARCHAR},
+      </if>
+      <if test="userlevel != null" >
+        USERLEVEL = #{userlevel,jdbcType=VARCHAR},
+      </if>
+      <if test="managecom != null" >
+        MANAGECOM = #{managecom,jdbcType=VARCHAR},
+      </if>
+      <if test="salecom != null" >
+        SALECOM = #{salecom,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where USERID = #{userid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zlf.bo.UserBo" >
+    update sp_users
+    set PWD = #{pwd,jdbcType=VARCHAR},
+      USERNAME = #{username,jdbcType=VARCHAR},
+      SEX = #{sex,jdbcType=VARCHAR},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      ENABLED = #{enabled,jdbcType=VARCHAR},
+      USERLEVEL = #{userlevel,jdbcType=VARCHAR},
+      MANAGECOM = #{managecom,jdbcType=VARCHAR},
+      SALECOM = #{salecom,jdbcType=VARCHAR}
+    where USERID = #{userid,jdbcType=VARCHAR}
+  </update>
+</mapper>
